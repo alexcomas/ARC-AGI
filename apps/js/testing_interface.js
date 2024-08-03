@@ -389,6 +389,34 @@ $(document).ready(function () {
 
 const classificationsFile = 'classifications.json';
 
+// Function to fetch dropdown options and populate the select element
+function fetchDropdownOptions() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", SERVER + "/dropdown_options", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            var dropdown = document.getElementById('classification');
+            dropdown.innerHTML = ''; // Clear existing options
+
+            options.forEach(function(option) {
+                var opt = document.createElement('option');
+                opt.value = option;
+                opt.innerHTML = option;
+                dropdown.appendChild(opt);
+            });
+
+            // Check existing classification after populating dropdown
+            checkExistingClassification();
+        }else {
+            console.error('Error fetching dropdown options:', xhr.status, xhr.statusText);
+            document.getElementById('classificationMessage').innerText = 'Error fetching dropdown options. Have you started the server?';
+            document.getElementById('classificationMessage').className = 'error-classified';
+        }
+    };
+    xhr.send();
+}
+
 // Function to check if a classification already exists
 function checkExistingClassification() {
     var xhr = new XMLHttpRequest();
@@ -414,7 +442,7 @@ function checkExistingClassification() {
             } else {
                 console.error('Error checking classification:', xhr.status, xhr.statusText);
                 document.getElementById('classificationMessage').innerText = 'Error checking classification';
-                document.getElementById('classificationMessage').className = '';
+                document.getElementById('classificationMessage').className = 'error-classified';
             }
         }
     };
@@ -457,5 +485,5 @@ function saveClassification() {
 // Call this function when the task is loaded
 function onTaskLoaded(task) {
     __loadedTask = task;
-    checkExistingClassification();
+    fetchDropdownOptions();
 }

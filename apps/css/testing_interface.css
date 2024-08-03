@@ -196,3 +196,7 @@ input, button {
 .not-classified {
     background-color: lightgray;
 }
+
+.error-classified{
+    background-color: lightcoral;
+}

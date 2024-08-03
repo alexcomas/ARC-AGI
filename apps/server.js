@@ -1,12 +1,13 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const cors = require('cors');  // Add this line
+const cors = require('cors');
 const app = express();
 const port = 3000;
 const classificationsFile = path.join(__dirname, 'classifications.json');
+const settingsFile = path.join(__dirname, 'settings.json');
 
-app.use(cors());  // Add this line
+app.use(cors());
 app.use(express.json());
 app.use(express.static('apps'));
 
@@ -19,6 +20,18 @@ async function ensureClassificationsFile() {
         console.log('Classifications file created');
     }
 }
+
+// Endpoint to fetch dropdown options
+app.get('/dropdown_options', async (req, res) => {
+    try {
+        let data = await fs.readFile(settingsFile, 'utf8');
+        let settings = JSON.parse(data);
+        res.json(settings.taskClasses);
+    } catch (error) {
+        console.error('Error reading settings file:', error);
+        res.status(500).json({ message: 'Error fetching dropdown options' });
+    }
+});
 
 app.post('/save_classification', async (req, res) => {
     console.log('Received request to save classification');
