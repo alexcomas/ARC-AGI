@@ -4,14 +4,12 @@ body {
 }
 
 #workspace {
-    width: 1410px;
+    display: flex;
     margin-left: auto;
     margin-right: auto;
 }
 
 #demonstration_examples_view {
-    float: left;
-    width: 450px;
     margin: 10px;
     margin-right: 5px;
     background-color: #d5d5d5;
@@ -19,9 +17,10 @@ body {
 
 #evaluation_view {
     float: left;
-    width: 930px;
     margin: 10px;
     margin-left: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     background-color: #d5d5d5;
     min-height: 850px;
 }
@@ -166,4 +165,34 @@ input, button {
 
 #modal input {
     margin-left: 70px;
+}
+
+#classification_view {
+    margin: 10px;
+    margin-left: 5px;
+    background-color: #d5d5d5;
+}
+
+#task_classification_header {
+    margin: 10px;
+}
+
+#classification, #loadTaskJsonButton, button[onclick="saveClassification()"] {
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+#classificationMessage {
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.classified-past {
+    background-color: lightgreen;
+}
+
+.not-classified {
+    background-color: lightgray;
 }

@@ -124,6 +124,20 @@
                     <div id="info_display"></div>
                 </div>
             </div>
+
+            <div id="classification_view">
+                <div class="text" id="task_classification_header">Task classification</div>
+                <!-- Dropdown for classification -->
+                <label for="classification">Classify Train-Test Set:</label>
+                <select id="classification">
+                    <option value="Type 1">Type 1</option>
+                    <option value="Type 2">Type 2</option>
+                    <option value="Type 3">Type 3</option>
+                </select>
+                <button onclick="saveClassification()">Save Classification</button>
+                <p id="classificationMessage"></p>
+            </div>
+
         </div>
     </body>
 </html>

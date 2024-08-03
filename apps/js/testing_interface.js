@@ -11,6 +11,10 @@ var EDITION_GRID_HEIGHT = 500;
 var EDITION_GRID_WIDTH = 500;
 var MAX_CELL_SIZE = 100;
 
+var SERVER = "http://localhost:3000";
+
+var __loadedTask = null;
+var __classifiedValue = null;
 
 function resetTask() {
     CURRENT_INPUT_GRID = new Grid(3, 3);
@@ -169,6 +173,7 @@ function loadTaskFromFile(e) {
 
         $('#load_task_file_input')[0].value = "";
         display_task_name(file.name, null, null);
+        onTaskLoaded(file.name);
     };
     reader.readAsText(file);
 }
@@ -190,6 +195,7 @@ function randomTask() {
             //$('#load_task_file_input')[0].value = "";
             infoMsg("Loaded task training/" + task["name"]);
             display_task_name(task['name'], task_index, tasks.length);
+            onTaskLoaded(task['name']);
         })
         .error(function(){
           errorMsg('Error loading task');
@@ -379,3 +385,77 @@ $(document).ready(function () {
         }
     });
 });
+
+
+const classificationsFile = 'classifications.json';
+
+// Function to check if a classification already exists
+function checkExistingClassification() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET",  SERVER + "/check_classification/" + __loadedTask, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                console.log('Response received:', xhr.responseText);  // Log the response
+                var response = JSON.parse(xhr.responseText);
+                var classificationMessage = document.getElementById('classificationMessage');
+                var classificationDropdown = document.getElementById('classification');
+
+                if (response.classification) {
+                    classificationMessage.innerText = 'This task has already been classified as: ' + response.classification;
+                    classificationMessage.className = 'classified-past';
+                    classificationDropdown.value = response.classification;
+                    __classifiedValue = response.classification;
+                } else {
+                    classificationMessage.innerText = 'This task has not been classified';
+                    classificationMessage.className = 'not-classified';
+                    __classifiedValue = null;
+                }
+            } else {
+                console.error('Error checking classification:', xhr.status, xhr.statusText);
+                document.getElementById('classificationMessage').innerText = 'Error checking classification';
+                document.getElementById('classificationMessage').className = '';
+            }
+        }
+    };
+    xhr.send();
+}
+
+// Function to save the classification
+function saveClassification() {
+    if(__classifiedValue){
+        var confirmation = confirm('This task has already been classified as: ' + __classifiedValue + '. Are you sure you want to overwrite it?');
+        if (!confirmation) {
+            return;
+        }
+    }
+    var classification = document.getElementById('classification').value;
+
+    var classificationData = {
+        task: __loadedTask,
+        classification: classification,
+        timestamp: new Date().toISOString()
+    };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", SERVER + "/save_classification", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                alert("Classification saved: " + classification);
+                checkExistingClassification();
+            } else {
+                console.error('Error saving classification:', xhr.status, xhr.statusText);
+                alert("Error saving classification");
+            }
+        }
+    };
+    xhr.send(JSON.stringify(classificationData));
+}
+
+// Call this function when the task is loaded
+function onTaskLoaded(task) {
+    __loadedTask = task;
+    checkExistingClassification();
+}
