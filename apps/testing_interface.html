@@ -128,16 +128,42 @@
             <div id="classification_view">
                 <div class="text" id="task_classification_header">Task classification</div>
                 <!-- Dropdown for classification -->
-                <label for="classification">Classify Train-Test Set:</label>
-                <select id="classification">
-                    <option value="Type 1">Type 1</option>
-                    <option value="Type 2">Type 2</option>
-                    <option value="Type 3">Type 3</option>
-                </select>
-                <button onclick="saveClassification()">Save Classification</button>
+                <div class="classification_container">
+                    <label for="classification">Classify Train-Test Set:</label>
+                    <select id="classification">
+                        <option value="Type 1">Type 1</option>
+                        <option value="Type 2">Type 2</option>
+                        <option value="Type 3">Type 3</option>
+                    </select>
+                    <button class="classification_button" onclick="saveClassification()">Save</button>
+                </div>
                 <p id="classificationMessage"></p>
-            </div>
 
+                <div class="text" id="add_category_header">Add a New Category</div>
+                <div class="classification_container">
+                    
+                    <label for="newCategory">New Category:</label>
+                    <input type="text" id="newCategory" name="newCategory">
+                    <button class="classification_button" onclick="addNewCategory()">Add</button>
+                </div>
+                <p id="addCategoryMessage"></p>
+                
+                <div class="classification_summary">
+                    <h3>Classification Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item total">Total number of tasks:</div>
+                        <div class="summary-item total" id="total_tasks">TO_LOAD</div>
+                        <div class="summary-item total">Number of classified tasks:</div>
+                        <div class="summary-item total" id="classified_tasks">TO_LOAD</div>
+                        <div class="summary-item total">Number of unclassified tasks:</div>
+                        <div class="summary-item total" id="unclassified_tasks">TO_LOAD</div>
+                
+                    </div>
+                    <div class="summary-grid" id="classification_types">
+                    </div>
+                </div>
+                
+            </div>
         </div>
     </body>
 </html>

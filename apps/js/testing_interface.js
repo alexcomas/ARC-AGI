@@ -394,24 +394,27 @@ function fetchDropdownOptions() {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", SERVER + "/dropdown_options", true);
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var options = JSON.parse(xhr.responseText);
-            var dropdown = document.getElementById('classification');
-            dropdown.innerHTML = ''; // Clear existing options
+        if (xhr.readyState === 4) {
+            if(xhr.status === 200) {
+                    
+                var options = JSON.parse(xhr.responseText);
+                var dropdown = document.getElementById('classification');
+                dropdown.innerHTML = ''; // Clear existing options
 
-            options.forEach(function(option) {
-                var opt = document.createElement('option');
-                opt.value = option;
-                opt.innerHTML = option;
-                dropdown.appendChild(opt);
-            });
+                options.forEach(function(option) {
+                    var opt = document.createElement('option');
+                    opt.value = option;
+                    opt.innerHTML = option;
+                    dropdown.appendChild(opt);
+                });
 
-            // Check existing classification after populating dropdown
-            checkExistingClassification();
-        }else {
-            console.error('Error fetching dropdown options:', xhr.status, xhr.statusText);
-            document.getElementById('classificationMessage').innerText = 'Error fetching dropdown options. Have you started the server?';
-            document.getElementById('classificationMessage').className = 'error-classified';
+                // Check existing classification after populating dropdown
+                checkExistingClassification();
+            }else {
+                console.error('Error fetching dropdown options:', xhr.status, xhr.statusText);
+                document.getElementById('classificationMessage').innerText = 'Error fetching dropdown options. Have you started the server?';
+                document.getElementById('classificationMessage').className = 'error-classified';
+            }
         }
     };
     xhr.send();
@@ -424,7 +427,6 @@ function checkExistingClassification() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                console.log('Response received:', xhr.responseText);  // Log the response
                 var response = JSON.parse(xhr.responseText);
                 var classificationMessage = document.getElementById('classificationMessage');
                 var classificationDropdown = document.getElementById('classification');
@@ -482,8 +484,67 @@ function saveClassification() {
     xhr.send(JSON.stringify(classificationData));
 }
 
+// Function to add a new category
+function addNewCategory() {
+    var newCategory = document.getElementById('newCategory').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", SERVER + "/add_category", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            var addCategoryMessage = document.getElementById('addCategoryMessage');
+            if (xhr.status === 200) {
+                addCategoryMessage.innerText = 'Category added successfully';
+                fetchDropdownOptions();
+            } else {
+                console.error('Error adding category:', xhr.status, xhr.statusText);
+                addCategoryMessage.innerText = 'Error adding category';
+            }
+        }
+    };
+    xhr.send(JSON.stringify({ category: newCategory }));
+}
+
+// Function to fetch and update classification summary
+async function updateClassificationSummary() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET",  SERVER + "/classification_summary", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    console.log('Response received:', xhr.responseText);  // Log the response
+                    var summaryData = JSON.parse(xhr.responseText);
+
+                     // Update the totals
+                    document.getElementById('total_tasks').innerText = summaryData.total_tasks;
+                    document.getElementById('classified_tasks').innerText = summaryData.classified_tasks;
+                    document.getElementById('unclassified_tasks').innerText = summaryData.unclassified_tasks;
+
+                    // Print the number of tasks in each classification type
+                    let classificationSummary = '';
+                    for (let [type, count] of Object.entries(summaryData.classification_counts)) {
+                        classificationSummary += `<div class="summary-item type">Number of tasks in '${type}'</div><div class="summary-item type"> ${count}</div>`;
+                    }
+                    document.querySelector('#classification_types').innerHTML = classificationSummary;
+            
+                } catch (error) {
+                    console.error('Error updating classification summary:', error);
+                }
+            } else {
+                console.error('Error checking classification:', xhr.status, xhr.statusText);
+                document.getElementById('classification_types').innerText = 'Error checking classification';
+            }
+        }
+    };
+    xhr.send();
+    
+}
+
+
 // Call this function when the task is loaded
 function onTaskLoaded(task) {
     __loadedTask = task;
     fetchDropdownOptions();
+    updateClassificationSummary();
 }

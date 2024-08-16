@@ -10,12 +10,17 @@ body {
 }
 
 #demonstration_examples_view {
+    display: flex;
+    flex-direction: column;
+
     margin: 10px;
     margin-right: 5px;
     background-color: #d5d5d5;
 }
 
 #evaluation_view {
+    display: flex;
+
     float: left;
     margin: 10px;
     margin-left: 5px;
@@ -23,6 +28,11 @@ body {
     padding-right: 10px;
     background-color: #d5d5d5;
     min-height: 850px;
+}
+
+#task_preview{
+    display: flex;
+    flex-direction: column;
 }
 
 #evaluation-input-view {
@@ -116,6 +126,9 @@ input, button {
 /*Task demonstration*/
 
 .pair_preview {
+    display: flex;
+    flex-direction: row;
+
     height: 200px;
     padding: 5px;
     border-bottom: solid 1px #a1a1a1;
@@ -168,25 +181,35 @@ input, button {
 }
 
 #classification_view {
+    display: flex;
+    flex-direction: column;
     margin: 10px;
     margin-left: 5px;
     background-color: #d5d5d5;
 }
 
-#task_classification_header {
+#task_classification_header, #add_category_header {
     margin: 10px;
 }
 
-#classification, #loadTaskJsonButton, button[onclick="saveClassification()"] {
+#classification, #loadTaskJsonButton, .classification_button {
     margin: 10px;
     padding: 5px;
     font-size: 16px;
 }
 
-#classificationMessage {
+#classificationMessage,
+#addCategoryMessage {
     margin: 10px;
     padding: 5px;
     font-size: 16px;
+}
+
+.classification_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .classified-past {
@@ -199,4 +222,44 @@ input, button {
 
 .error-classified{
     background-color: lightcoral;
+}
+
+#newCategory {
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.classification_summary {
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 20px 10px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+}
+
+.summary-item {
+    padding: 5px;
+    font-size: 16px;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+.summary-item.type {
+    background-color: #d0d0d0;
+    border-radius: 4px;
+}
+
+#classification_types{
+    margin-top: 2rem;
 }
